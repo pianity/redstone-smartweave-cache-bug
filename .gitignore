@@ -1,0 +1,4 @@
+node_modules/
+smartweave-cache/
+arlocaldb/
+yarn-error.log
