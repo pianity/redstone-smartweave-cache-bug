@@ -14,7 +14,7 @@ export async function createWallet(initialAr = "0"): Promise<[JWKInterface, stri
     return [wallet, address];
 }
 
-export async function fileExists(path: string) {
+export async function pathExists(path: string) {
     try {
         await access(path);
 
@@ -42,10 +42,12 @@ export function sleep(seconds: number) {
 }
 
 export async function runEvery(
+    // eslint-disable-next-line
     callback: (...args: any[]) => Promise<unknown>,
     intervalSeconds: number,
     awaitCallback = true,
 ) {
+    // eslint-disable-next-line
     while (true) {
         if (awaitCallback) {
             try {

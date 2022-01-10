@@ -10,8 +10,6 @@ export const ARLOCAL_URL = `${ARWEAVE_PROTOCOL}://${ARWEAVE_HOST}:${ARWEAVE_PORT
 export const ARLOCALDB_PATH = "./arlocaldb";
 export const CONTRACT_INFOS_PATH = join(ARLOCALDB_PATH, "contractInfos.json");
 
-export const SMARTWEAVE_CACHE_PATH = "./smartweave-cache";
-
 export const arweave = Arweave.init({
     host: ARWEAVE_HOST,
     port: ARWEAVE_PORT,

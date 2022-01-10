@@ -35,8 +35,8 @@ async function uploadContract(wallet: JWKInterface, contractContent: string, ini
 }
 
 async function createErc1155(pianityApiWallet: JWKInterface, pianityApiAddress: string) {
-    const [superOwnerWallet, superOwnerAddress] = await createWallet("9999");
-    const [communityChestWallet, communityChestAddress] = await createWallet("9999");
+    const [_superOwnerWallet, superOwnerAddress] = await createWallet("9999");
+    const [_communityChestWallet, communityChestAddress] = await createWallet("9999");
 
     const erc1155InitState = JSON.stringify(
         {
