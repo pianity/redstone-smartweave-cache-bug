@@ -5,7 +5,6 @@ import { join } from "node:path";
 
 import { Contract, SmartWeave, SmartWeaveNodeFactory } from "redstone-smartweave";
 import got from "got";
-import { JWKInterface } from "arweave/node/lib/wallet";
 import Arlocal from "arlocal";
 
 import { setupContract, ContractInfos } from "@/setupContract";
@@ -36,27 +35,10 @@ async function createSmartweaveEnv(contractId: string, cachePath: string): Promi
     return { smartweave, contract };
 }
 
-// async function initializeEnvironment() {
-//     console.log("starting arlocal");
-//     await runArlocal();
-//
-//     console.log("setting up the contract");
-//     const contractInfos = await setupContract();
-// }
-
 async function getBalance(contract: Contract, userAddress: string) {
     const state = (await contract.readState()).state as any;
     return state.tokens.PTY.balances[userAddress];
 }
-
-// async function getUserWallet(username: string): Promise<[JWKInterface, string]> {
-//     const walletRootPath = "/home/noom/dev/pianity/spinup-arlocal/arlocaldb";
-//
-//     const walletRaw = (await readFile(join(walletRootPath, `wallets/${username}.json`))).toString();
-//     const wallet = JSON.parse(walletRaw) as JWKInterface;
-//
-//     return [wallet, await arweave.wallets.jwkToAddress(wallet)];
-// }
 
 async function loadContractInfos() {
     if (!(await fileExists(CONTRACT_INFOS_PATH))) {
@@ -105,8 +87,6 @@ async function runBugReproduction() {
     const { apiWallet, apiAddress, contractId } = await loadContractInfos();
 
     const originalEnv = await createSmartweaveEnv(contractId, SMARTWEAVE_CACHE_PATH);
-
-    // await contract.readState();
 
     const [userWallet, userAddress] = await createWallet();
     await feedUser(originalEnv.contract, apiWallet, apiAddress, userAddress, 100);

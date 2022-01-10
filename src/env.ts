@@ -1,21 +1,6 @@
 import { join } from "node:path";
-import { readFileSync } from "node:fs";
 
 import Arweave from "arweave";
-
-function env(envVar: string, fallback?: string): string | null {
-    return process.env[envVar] || fallback || null;
-}
-
-function envRequired(envVar: string, fallback?: string): string {
-    if (!process.env[envVar]) {
-        if (fallback === undefined) {
-            throw new Error(`Missing ${envVar} in env`);
-        }
-        return fallback;
-    }
-    return process.env[envVar] as string;
-}
 
 export const ARWEAVE_HOST = "localhost";
 export const ARWEAVE_PORT = 1984;

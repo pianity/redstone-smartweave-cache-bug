@@ -1,12 +1,9 @@
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
 
-import got from "got";
-import Arlocal from "arlocal";
 import { JWKInterface } from "arweave/node/lib/wallet";
 
-import { ARLOCAL_URL, arweave, ARWEAVE_PORT } from "@/env";
-import { createWallet, runEvery } from "@/utils";
+import { arweave } from "@/env";
+import { createWallet } from "@/utils";
 
 async function uploadContract(wallet: JWKInterface, contractContent: string, initialState: string) {
     const contractSourceTx = await arweave.createTransaction({ data: contractContent }, wallet);
