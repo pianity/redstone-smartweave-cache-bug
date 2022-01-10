@@ -1,5 +1,5 @@
 {
-    "name": "fake-transaction",
+    "name": "redstone-smartweave-cache-bug",
     "version": "1.0.0",
     "main": "index.js",
     "author": "Eyal Chojnowski",
