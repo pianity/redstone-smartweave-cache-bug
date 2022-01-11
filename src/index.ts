@@ -118,7 +118,7 @@ async function runBugReproduction(arlocal?: Arlocal) {
 (async () => {
     if (process.argv[2] === "--run-arlocal") {
         await startArlocal();
-    } else if (process.argv[2] === "--run-bug") {
+    } else if (process.argv[2] === "--run-experimentation") {
         await runBugReproduction();
     } else if (process.argv[2] === "--run-both") {
         const arlocal = await startArlocal();
