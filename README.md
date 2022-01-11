@@ -25,7 +25,7 @@ state of the contract yields wrong results.
   transactions drops below 10, new ones starts to be processed, until the total of transactions
   sent is equal to 100.
 
-The expected result is that steps 4, 5 and 7 shows that the amount of tokens received by the
+The expected result is that steps 4, 5 and 7 show that the amount of tokens received by the
 address they were sent to is 100. However, the result yielded by step 5 doesn't match this
 expectation, which we believe is the illustration of the issue we're experimenting.
 
