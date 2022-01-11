@@ -4,8 +4,7 @@ This repository present a very simpled down version of how transactions are run 
 order to demonstrate the issue we have with *redstone-smartweave*.
 
 The problem demonstrated here is the following: when running a number of concurrent contract
-interactions after having initialized the *redstone-smartweave* client, reading the state of the
-state of the contract yields wrong results.
+interactions after having initialized the *redstone-smartweave* client, reading the state of the contract yields wrong results.
 
 **This is demonstrated here by:**
 
