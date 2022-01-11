@@ -3,7 +3,7 @@ import { JWKInterface } from "arweave/node/lib/wallet";
 import Transaction from "arweave/node/lib/transaction";
 import { v4 as uuid } from "uuid";
 
-import { log, sleep } from "@/utils";
+import { logWithTime, sleep } from "@/utils";
 import { arweave } from "@/env";
 
 LoggerFactory.INST.setOptions({
@@ -66,7 +66,7 @@ async function sendPTY(
 
             break;
         } catch (rawErr) {
-            log("FAILED TRANSACTION, WAITING 3s");
+            logWithTime("FAILED TRANSACTION, WAITING 3s");
             console.log(rawErr);
             await sleep(3);
         }
@@ -97,11 +97,11 @@ export async function feedUser(
         for (let i = 0; i < newTxCount; i++) {
             const id = uuid();
 
-            log(`${id}: running`);
+            // logWithTime(`transaction ${id}: processing`);
 
             // eslint-disable-next-line
             const promise = sendPTY(contract, apiWallet, apiAddress, 1, userAddress).then(() => {
-                log(`${id}: finished`);
+                // logWithTime(`transaction ${id}: finished`);
                 executedTx += 1;
                 const index = queue.findIndex(({ id: taskId }) => taskId === id);
                 queue.splice(index, 1);
@@ -112,6 +112,6 @@ export async function feedUser(
 
         await Promise.race(queue.map(({ promise }) => promise));
 
-        log(`${executedTx} / ${maxTx}`);
+        logWithTime(`${executedTx} / ${maxTx}`);
     }
 }

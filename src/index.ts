@@ -4,6 +4,7 @@ import { readFile, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 import { Contract, SmartWeave, SmartWeaveNodeFactory } from "redstone-smartweave";
+import { readContract } from "smartweave";
 import got from "got";
 import Arlocal from "arlocal";
 
@@ -45,7 +46,7 @@ async function loadContractInfos() {
 async function startArlocal(): Promise<Arlocal> {
     const shouldSetupArlocal = !(await pathExists(ARLOCALDB_PATH));
 
-    console.log("starting arlocal");
+    console.log("starting arlocal...");
     const arlocal = new Arlocal(ARWEAVE_PORT, false, ARLOCALDB_PATH, true);
 
     await arlocal.start();
@@ -62,51 +63,53 @@ async function startArlocal(): Promise<Arlocal> {
     }, 0.5);
 
     if (shouldSetupArlocal) {
-        console.log("setting up arlocal...");
-
-        await setupContract();
-
-        console.log("setting up the contract");
+        console.log("setting up the contract...");
         const contractInfos = await setupContract();
 
         await writeFile(join(ARLOCALDB_PATH, "contractInfos.json"), JSON.stringify(contractInfos));
 
         console.log("done!");
     } else {
-        console.log("arlocal has already been set up!");
+        console.log("the contract has already been set up!");
     }
 
     return arlocal;
 }
 
 async function runBugReproduction(arlocal?: Arlocal) {
-    const originalEnvCachePath = "./original-smartweave-cache";
+    console.log("starting the experiment...");
+
+    const initialEnvCachePath = "./original-smartweave-cache";
     const freshEnvCachePath = "./fresh-smartweave-cache";
 
-    await rm(originalEnvCachePath, { recursive: true, force: true });
+    await rm(initialEnvCachePath, { recursive: true, force: true });
     await rm(freshEnvCachePath, { recursive: true, force: true });
 
     const { apiWallet, apiAddress, contractId } = await loadContractInfos();
 
-    const originalEnv = await createSmartweaveEnv(contractId, originalEnvCachePath);
+    const initialEnv = await createSmartweaveEnv(contractId, initialEnvCachePath);
 
     const [_userWallet, userAddress] = await createWallet();
-    await feedUser(originalEnv.contract, apiWallet, apiAddress, userAddress, 100);
-    const balanceOriginalEnv = await getBalance(originalEnv.contract, userAddress);
+    await feedUser(initialEnv.contract, apiWallet, apiAddress, userAddress, 100);
 
-    console.log("The original client reports a balance of:", balanceOriginalEnv);
+    console.log("reading contract states...");
+
+    const balanceInitialEnv = await getBalance(initialEnv.contract, userAddress);
 
     const freshEnv = await createSmartweaveEnv(contractId, freshEnvCachePath);
-
     const balanceNewEnv = await getBalance(freshEnv.contract, userAddress);
 
-    console.log("The freshly created env reports a balance of:", balanceNewEnv);
+    const balanceSmartweaveV1 = (await readContract(arweave, contractId)).tokens.PTY.balances[
+        userAddress
+    ];
 
-    const balanceOriginalEnv2 = await getBalance(originalEnv.contract, userAddress);
+    console.log("smartweave v1 client reports a balance of:", balanceSmartweaveV1);
 
-    console.log("The original client still reports a balance of:", balanceOriginalEnv2);
+    console.log("initial redstone-smartweave client reports a balance of:", balanceInitialEnv);
 
-    await rm(originalEnvCachePath, { recursive: true, force: true });
+    console.log("freshly created redstone-smartweave client reports a balance of:", balanceNewEnv);
+
+    await rm(initialEnvCachePath, { recursive: true, force: true });
     await rm(freshEnvCachePath, { recursive: true, force: true });
 
     if (arlocal) {
@@ -118,7 +121,7 @@ async function runBugReproduction(arlocal?: Arlocal) {
 (async () => {
     if (process.argv[2] === "--run-arlocal") {
         await startArlocal();
-    } else if (process.argv[2] === "--run-experimentation") {
+    } else if (process.argv[2] === "--run-experiment") {
         await runBugReproduction();
     } else if (process.argv[2] === "--run-both") {
         const arlocal = await startArlocal();

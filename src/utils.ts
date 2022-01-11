@@ -24,7 +24,7 @@ export async function pathExists(path: string) {
     }
 }
 
-export function log(message: string) {
+export function logWithTime(message: string) {
     const now = new Date();
 
     const h = String(now.getHours()).padStart(2, "0");
