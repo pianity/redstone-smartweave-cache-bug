@@ -25,7 +25,7 @@ interactions after having initialized the *redstone-smartweave* client, reading 
   sent is equal to 100.
 
 The expected result is that steps 5, 6 and 7 show that the amount of tokens received by the
-address they were sent to is 100. However, the result yielded by step 6 doesn't match this
+address is 100. However, the result yielded by step 6 doesn't match this
 expectation, which we believe is the illustration of the issue we're experimenting.
 
 # Running the experiment
