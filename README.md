@@ -34,7 +34,8 @@ expectation, which we believe is the illustration of the issue we're experimenti
 Steps to run the demonstration:
 
 1. `yarn install`
-1. `yarn start --run-arlocal`
+1. `yarn start --run-arlocal` (wait a few seconds for it to setup the contract if it's the first
+   time you run it)
 1. in a different terminal, `yarn start --run-experiment`
 
 # Extra
