@@ -10,7 +10,7 @@ import Arlocal from "arlocal";
 
 import { setupContract, ContractInfos } from "@/setupContract";
 import { ARLOCALDB_PATH, ARLOCAL_URL, arweave, ARWEAVE_PORT, CONTRACT_INFOS_PATH } from "@/env";
-import { createWallet, pathExists, runEvery } from "@/utils";
+import {createWallet, pathExists, runEvery, sleep} from "@/utils";
 import { feedUser } from "@/reproduceCacheBug";
 
 type SmartweaveEnv = {
@@ -29,9 +29,9 @@ async function createSmartweaveEnv(contractId: string, cachePath: string): Promi
     return { smartweave, contract };
 }
 
-async function getBalance(contract: Contract, userAddress: string) {
+async function getBalance(contract: Contract, userAddress: string, height?: number) {
     // eslint-disable-next-line
-    const state = (await contract.readState()).state as any;
+    const state = (await contract.readState(height)).state as any;
     return state.tokens.PTY.balances[userAddress];
 }
 
@@ -90,16 +90,27 @@ async function runBugReproduction(arlocal?: Arlocal) {
     const initialEnv = await createSmartweaveEnv(contractId, initialEnvCachePath);
 
     const [_userWallet, userAddress] = await createWallet();
-    await feedUser(initialEnv.contract, apiWallet, apiAddress, userAddress, 100);
+    await feedUser(initialEnv.contract, apiWallet, apiAddress, userAddress, 150);
 
+
+    // console.log("sleeping 5s...");
+    // await sleep(5);
     console.log("reading contract states...");
 
-    const balanceInitialEnv = await getBalance(initialEnv.contract, userAddress);
+    const currentHeight = (await arweave.network.getInfo()).height;
+
+    console.log(`Reading at ${currentHeight} for all cases`);
+
+    // console.log("Current height", (await arweave.network.getInfo()).height);
+    const balanceInitialEnv = await getBalance(initialEnv.contract, userAddress, currentHeight);
 
     const freshEnv = await createSmartweaveEnv(contractId, freshEnvCachePath);
-    const balanceNewEnv = await getBalance(freshEnv.contract, userAddress);
 
-    const balanceSmartweaveV1 = (await readContract(arweave, contractId)).tokens.PTY.balances[
+    // console.log("Current height", (await arweave.network.getInfo()).height);
+    const balanceNewEnv = await getBalance(freshEnv.contract, userAddress, currentHeight);
+
+    // console.log("Current height", (await arweave.network.getInfo()).height);
+    const balanceSmartweaveV1 = (await readContract(arweave, contractId, currentHeight)).tokens.PTY.balances[
         userAddress
     ];
 

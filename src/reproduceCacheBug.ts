@@ -112,6 +112,6 @@ export async function feedUser(
 
         await Promise.race(queue.map(({ promise }) => promise));
 
-        logWithTime(`${executedTx} / ${maxTx}`);
+        //logWithTime(`${executedTx} / ${maxTx}`);
     }
 }
